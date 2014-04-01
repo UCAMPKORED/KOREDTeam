@@ -1,0 +1,99 @@
+package view;
+
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import model.domain.Animal;
+
+@SuppressWarnings("serial")
+public class AnimalDetailView extends JFrame {
+	private JLabel lb_title = new JLabel();
+	
+	private JButton bt_edit = new JButton("EDIT");
+	private JButton bt_back = new JButton("BACK");
+	private DetailPanel dPanel;
+	private Container con;
+	
+	private Animal animal;
+
+	public AnimalDetailView(Animal newAnimal) {
+		// TODO Auto-generated constructor stub
+		animal = newAnimal;
+		init();
+		this.setTitle("KORED과 함께하는 멸종위기동물을 알아봅시다!");
+		
+		setSize(600, 600);
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		int xpos = (int) (screen.getWidth() / 2 - getWidth() / 2);
+		int ypos = (int) (screen.getHeight() / 2 - getHeight() / 2);
+
+		setLocation(xpos, ypos);
+		setResizable(false);
+		setVisible(true);
+
+	}
+
+	public void init() {
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		con = this.getContentPane();
+		con.setLayout(null);
+		lb_title.setText("멸종동물 상세정보");
+		lb_title.setBounds(50, 0, 300, 50);
+		lb_title.setFont(new Font("Default", Font.BOLD, 20));
+
+		con.add(lb_title);
+		
+		dPanel = new DetailPanel(animal);
+		con.add(dPanel);
+		
+		bt_edit.setBounds(0, 500, 300, 80);
+		bt_edit.setFont(new Font("Default", Font.BOLD, 20));
+		bt_edit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				 JButton button = (JButton) e.getSource();
+	                if (button.getText().equals("EDIT")){
+	                	 button.setText("SAVE");
+	                	 dPanel.setEdit(true);
+	                }else{
+	                	button.setText("EDIT"); // AnonymousClassListener의 멤버나
+		                // JFrame의 멤버를 호출할 수 있음
+	                	dPanel.setEdit(false);
+	                	
+	                }
+			}
+		});
+
+		con.add(bt_edit);
+
+		bt_back.setBounds(300, 500, 300, 80);
+		bt_back.setFont(new Font("Default", Font.BOLD, 20));
+		bt_back.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				 
+			}
+		});
+		con.add(bt_back);
+	}
+	
+//	public static void main(String[] args){
+//		
+//		//AnimalDetailView At = new AnimalDetailView(new Animal(01, "강아지", "개과", "2등급", "무척활발하고 멋잇고 귀엽고 앙증맞은 강아지"));
+//		AnimalDetailView At = new AnimalDetailView(new Animal());
+//	}
+
+}
