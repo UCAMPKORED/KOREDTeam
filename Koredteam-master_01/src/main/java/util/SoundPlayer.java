@@ -61,7 +61,7 @@ class MidiPlayer {
 	private Sequence sequence = null; 
 	MidiPlayer() {
 		try {
-			sequence = MidiSystem.getSequence(new File("sound/bird.mid"));
+			sequence = MidiSystem.getSequence(new File("sound/circle.mid"));
 			sequencer = MidiSystem.getSequencer();
 			sequencer.open();
 			sequencer.setSequence(sequence);
