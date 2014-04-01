@@ -1,0 +1,201 @@
+package model.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import model.domain.Animal;
+import util.DAOFactory;
+import exception.AnoDoubleException;
+import exception.AnoNotExistException;
+
+public class AnimalDAO {
+
+	public static ArrayList<Animal> getCoffeeAll() throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		ArrayList<Animal> all = null;
+
+		try {
+			con = DAOFactory.getConnection();
+			pstmt = con.prepareStatement("select * from coffee order by cno");
+			rset = pstmt.executeQuery();
+			all = new ArrayList<Animal>();
+
+			while (rset.next()) {
+				all.add(new Animal(rset.getInt(1), rset.getString(2), rset
+						.getInt(3), rset.getString(4)));
+			}
+
+		} finally {
+			DAOFactory.close(con, pstmt, rset);
+		}
+
+		return all;
+	}
+
+	public static ArrayList<Animal> searchByName(String cname) throws SQLException, AnoNotExistException{
+		
+		if (!isExist(cname)) {
+			throw new AnoNotExistException(cname + "라는 커피가 없습니다.");
+		}
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		ArrayList<Animal> all = null;
+
+		try {
+			con = DAOFactory.getConnection();
+			pstmt = con.prepareStatement("select * from coffee where cname = ? order by cno");
+			pstmt.setString(1, cname);
+			rset = pstmt.executeQuery();
+			all = new ArrayList<Animal>();
+
+			while (rset.next()) {
+				all.add(new Animal(rset.getInt(1), rset.getString(2), rset
+						.getInt(3), rset.getString(4)));
+			}
+
+		} finally {
+			DAOFactory.close(con, pstmt, rset);
+		}
+
+		return all;
+	}
+
+	public static boolean insert(String cname, int cprice) throws SQLException,
+			AnoDoubleException {
+		if (isExist(cname)) {
+			throw new AnoDoubleException();
+		}
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		boolean result = false;
+		try {
+			con = DAOFactory.getConnection();
+			pstmt = con
+					.prepareStatement("insert into coffee values(cno_seq.nextval,?,?,sysdate)");
+			pstmt.setString(1, cname);
+			pstmt.setInt(2, cprice);
+
+			if (pstmt.executeUpdate() == 1) {
+				result = true;
+			}
+		} finally {
+			DAOFactory.close(con, pstmt);
+		}
+		return result;
+
+	}
+
+	private static boolean isExist(String memid) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		boolean result = false;
+
+		try {
+			con = DAOFactory.getConnection();
+			pstmt = con.prepareStatement("select * from coffee where cname= ? ");
+			pstmt.setString(1, memid);
+			rset = pstmt.executeQuery();
+			if (rset.next()) {
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DAOFactory.close(con, pstmt, rset);
+		}
+		return result;
+	}
+
+	public static boolean update(String cname, int cprice) throws SQLException,
+			AnoNotExistException {
+		if (!isExist(cname)) {
+			throw new AnoNotExistException("수정 시도하려는 " + cname + " 가 없습니다.");
+		}
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		boolean result = false;
+		try {
+			con = DAOFactory.getConnection();
+			String sql = "update coffee set cprice=? where cname=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, cprice);
+			pstmt.setString(2, cname);
+
+			if (pstmt.executeUpdate() == 1) {
+				result = true;
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DAOFactory.close(con, pstmt);
+		}
+		return result;
+	}
+
+	public static int getSize() {
+		ArrayList<Animal> list = new ArrayList<Animal>();
+		try {
+			list = getCoffeeAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list.size();
+	}
+
+	public static boolean delete(String cname) throws SQLException,
+			AnoNotExistException {
+		if (!isExist(cname)) {
+			throw new AnoNotExistException("삭제 시도하려는 " + cname + " 가 없습니다.");
+		}
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		boolean result = false;
+		try {
+			con = DAOFactory.getConnection();
+			String sql = "delete from coffee where cname=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, cname);
+
+			if (pstmt.executeUpdate() == 1) {
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DAOFactory.close(con, pstmt);
+		}
+		return result;
+	}
+
+	public static boolean deleteAll() throws SQLException {
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		boolean result = false;
+		try {
+			con = DAOFactory.getConnection();
+			String sql = "delete from coffee";
+			pstmt = con.prepareStatement(sql);
+			
+			if (pstmt.executeUpdate() == 1) {
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DAOFactory.close(con, pstmt);
+		}
+		return result;
+	}
+
+}

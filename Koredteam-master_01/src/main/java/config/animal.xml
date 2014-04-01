@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+				  "mybatis-3-mapper.dtd">
+
+<mapper namespace="Kored">
+
+	<select id="selectAllAnimal" resultType="animal">
+		select * from animal
+	</select>
+	
+	<select id="selectAnimalByAname" parameterType="int" resultType="animal">
+		select * from animal where aname = #{aName}
+	</select>
+
+
+	<insert id="insertAnimal" parameterType="animal">
+		insert into animal
+		values (#{aNo}, #{aName}, #{aType}, #{aGrade}, #{aDesc})
+	</insert>
+
+	<update id="updateAnimal" parameterType="animal">
+		update animal
+		set aname = #{aName}
+		, atype = #{aType}
+		, agrade = #{aGrade}
+		, adesc = #{aDesc}
+		where ano = #{aNo}
+	</update>
+	
+	<delete id="deleteAnimalByAno" parameterType="int">
+		delete
+		from animal
+		where ano = #{aNo}
+	</delete>
+	
+	<delete id="deleteAnimal">
+		delete
+		from animal
+	</delete>
+
+</mapper>
